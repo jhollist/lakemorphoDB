@@ -1,4 +1,4 @@
-#'  Function to pull together lake morphometry data
+#'  Function to pull together and zip up lake morphometry data
 #' 
 #'  This fucntion takes a list of HUC regions, grabs the appropriate shape files 
 #'  and .csv's and creates a zip file from them
@@ -10,9 +10,12 @@
 #'
 #'  @examples
 #'  x<-c("ArkRedWhite11","California18") 
-#'  getLakeMorpho(x) 
+#'  zipLakeMorpho(x) 
 #'  #Example for Eastern TNC Lakes
-#'  eTNCRegions <- c()
+#'  eTNCRegions <- c("NorthEast01","MidAtlantic02","SouthAtlanticNorth03N",
+#'                   "SouthAtlanticWest03W","SouthAtlanticSouth03S","GreatLakes04",
+#'                   "Ohio05","Tennessee06")
+#'  zipLakeMorpho(eTNCRegions,"epaLakeMorphoForTNC.zip")                  
 zipLakeMorpho<-function(hucVec,outFile="outputLakeMorpho.zip"){
   # Assumes location is AED Network drive
   basePath<-"L:\\Priv\\LakeMorphometry"

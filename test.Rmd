@@ -1,0 +1,11 @@
+Title
+========================================================
+
+Test of timing with cache
+```{r cache=TRUE, eval=TRUE}
+x-rnorm(10000000)
+```
+
+```{r cache=FALSE, eval=FALSE}
+x-rnorm(10000000)
+```

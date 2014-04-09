@@ -25,5 +25,6 @@ zipLakeMorpho<-function(hucVec,outFile="outputLakeMorpho.zip"){
     myPath<-paste(basePath,dir,"lakemorphodata\\FinalLakeMorpho",sep="\\")
     myFiles<-c(myFiles,list.files(path=myPath,pattern=dir,full.names=T))
   }
+  myFiles<-c(myFiles,list.files(path=basePath,pattern="DataDictionary",full.names=T))
   zip(outFile,myFiles,flags="-j")
 }  

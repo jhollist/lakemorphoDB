@@ -32,20 +32,24 @@ There are some duplicate COMIDS.  May be some other issues, still need to dig
 into it.
 ```{r findProbs}
 # Find dups
-nlmdata_dups<-lmorphoAll_sqlite%.%
-  group_by(COMID)%.%
-  summarise(count=n())%.%
-  filter(count>1)%.%
+nlmdata_dups<-lmorphoAll_sqlite$>$
+  group_by(COMID)$>$
+  summarise(count=n())$>$
+  filter(count>1)$>$
   collect(-1)
 # Grab morpho data for each duplicate
 # and check.  If identifcal (or close to it as some of the length stuff 
 # based on a sample)
+filter(lmorphoAll_sqlite,COMID%in%nlmdata_dups$COMID)%>%
+  select(COMID,region,SurfaceArea)%>%
+  arrange(COMID)
+
 ```
 
 ## Select NLA Lakes
 ```{r getNLA}
 #Replace input with cleaned up data (i.e. no dups)
-lmorphoNLA<-filter(lmorphoAll_sqlite,!is.na(nlaSITE_ID))%.%
+lmorphoNLA<-filter(lmorphoAll_sqlite,!is.na(nlaSITE_ID))$>$
                   data.frame()
 ```
 
@@ -60,7 +64,7 @@ by(lmorphoNLA,lmorphoNLA$region,function(x) mean(x[,1]))
 by(lmNLA_maxdepth,lmNLA_maxdepth$region,function(x,y) correctDepth(x[,1:2],"influence.measures"))
 
 
-lmdCorrectionStats_im<-group_by(lmorphoNLA,region)%.%
+lmdCorrectionStats_im<-group_by(lmorphoNLA,region)$>$
   summarise(cf=correctDepth(data.frame(MaxDepthRaw,MaxDepthNLA),
                             "influence.measures",200)[[1]],
             corv=correctDepth(data.frame(MaxDepthRaw,MaxDepthNLA),
@@ -75,7 +79,7 @@ lmdCorrectionStats_im<-group_by(lmorphoNLA,region)%.%
                            "influence.measures",200)[[6]])
 
 
-lmdCorrectionStats_cooks<-group_by(lmorphoNLA,region)%.%
+lmdCorrectionStats_cooks<-group_by(lmorphoNLA,region)$>$
   summarise(cf=correctDepth(data.frame(MaxDepthRaw,MaxDepthNLA),
                             "cooks",1000)[[1]],
             cor=correctDepth(data.frame(MaxDepthRaw,MaxDepthNLA),
@@ -85,7 +89,7 @@ lmdCorrectionStats_cooks<-group_by(lmorphoNLA,region)%.%
             nTrain=round(length(MaxDepthRaw)*0.8),
             nValid=length(MaxDepthRaw)-round(length(MaxDepthRaw)*0.8))
 
-lmdCorrectionStats_none<-group_by(lmorphoNLA,region)%.%
+lmdCorrectionStats_none<-group_by(lmorphoNLA,region)$>$
   summarise(cf=correctDepth(data.frame(MaxDepthRaw,MaxDepthNLA),
                             "none",1000)[[1]],
             cor=correctDepth(data.frame(MaxDepthRaw,MaxDepthNLA),
@@ -96,7 +100,7 @@ lmdCorrectionStats_none<-group_by(lmorphoNLA,region)%.%
             nValid=length(MaxDepthRaw)-round(length(MaxDepthRaw)*0.8))
 
 # Group Correlation Results
-group_by(lmorphoNLA,region)%.%
+group_by(lmorphoNLA,region)$>$
   summarise(r=cor(MaxDepthCorrect,MaxDepthNLA,use="pairwise.complete.obs"))
 
 # Plot All
@@ -115,7 +119,7 @@ ma02<-filter(lmorphoNLA, region=="MidAtlantic02")
 ma02_lm<-lm(MaxDepthNLA~0+MaxDepthRaw,data=ma02)
 
 # Filter out problem children
-lowMiss08<-filter(lmorphoNLA, region=="LowerMississippi08") %.%
+lowMiss08<-filter(lmorphoNLA, region=="LowerMississippi08") $>$
   data.frame()
 lowMiss08<-data.frame(lowMiss08["MaxDepthRaw"],lowMiss08["MaxDepthNLA"])
 lowMiss08<-lowMiss08[!is.na(lowMiss08["MaxDepthNLA"]),]
@@ -138,7 +142,7 @@ ggLowMiss08NoInfl<-ggplot(lowMiss08NoInfl,aes(x=MaxDepthRaw,y=MaxDepthNLA)) +
 ggLowMiss08NoInfl
 
 # Group Correlation Results
-group_by(lowMiss08NoInfl,region)%.%
+group_by(lowMiss08NoInfl,region)$>$
   summarise(r=cor(MaxDepthCorrect,MaxDepthNLA,use="pairwise.complete.obs"))
 
 
@@ -149,7 +153,7 @@ group_by(lowMiss08NoInfl,region)%.%
 3. use new factors to calculate corrected volumes
 
 # Test correctDepth
-lowMiss08<-filter(lmorphoNLA, region=="LowerMississippi08") %.%
+lowMiss08<-filter(lmorphoNLA, region=="LowerMississippi08") $>$
   data.frame()
 lowMiss08<-data.frame(lowMiss08["MaxDepthRaw"],lowMiss08["MaxDepthNLA"])
 correctDepth(lowMiss08,"cooks")
